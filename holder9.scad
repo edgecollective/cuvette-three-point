@@ -1,15 +1,26 @@
-// holder8.scad -- holder7 with a shortened chamber and a 15 mm beam height.
+// holder9.scad -- holder8 plus selectable views of the internal structure.
 //
-// New in holder8:
-//   - the whole chamber now tops out at chamber_depth=28 (the PCB plates
-//     and shrouds keep their full height -- the 34 mm boards require it),
-//     so ~22 mm of a 45 mm cuvette stands exposed for grabbing, all round;
-//   - the clip shifted down with the chamber: hinge block at z 24..28,
-//     tongue hanging to z 6.5, nub at z=10.  The nub sits below the beam
-//     (a nub at beam height z=20 would leave only a 4 mm spring arm --
-//     far too stiff); pressing 5 mm above the seat still registers the
-//     plumb-sitting cuvette against the full-height rods.  Spring force is
-//     back to ~2 N with the stock 1.6 mm tongue;
+// New in holder9: set view_mode (just below) to choose how the model is
+// shown:
+//   "solid"   -- the real, printable part (default; use this for STL export)
+//   "xray"    -- the tongue and nub drawn solid, everything else as a
+//                transparent ghost, so the clip is visible in place
+//   "cutaway" -- the chamber wall around the clip corner is carved away,
+//                leaving the whole tongue (crimson) standing exposed in
+//                the opening
+// The xray ghosts use the % modifier, so they vanish on render (F6) --
+// preview with F5.  The cutaway DOES render/export, handy for a demo print.
+//
+// From holder8, revised:
+//   - the chamber tops out at chamber_depth (the PCB plates and shrouds
+//     keep their full height -- the 34 mm boards require it), so most of a
+//     45 mm cuvette stands exposed for grabbing;
+//   - the nub presses at optical-path height (nub_z = window_z): a small
+//     anchor TOWER at the clip corner rises from the chamber rim to the
+//     plate-top plane, giving the tongue its full-length spring arm (hinge
+//     at 36, tip at 16, ~1.4 N) despite the low chamber walls.  The tower
+//     is only the corner column, so the +/-y grab access is unaffected,
+//     and printed upside down it starts on the bed;
 //   - floor_thick 2 -> 5: the beam passes 15 mm above the cuvette's bottom
 //     (standard Z-dimension).
 //
@@ -48,6 +59,9 @@
 
 $fn = 40;
 
+view_mode   = "solid"; // "solid" | "xray" | "cutaway"
+show_ghosts = false;    // translucent cuvette + PCBs for fit checking
+
 /* ---- cuvette chamber ---- */
 window_diam  = 6;
 cuvette_dim  = 12.5;
@@ -67,13 +81,13 @@ clip_thick   = 1.6;   // tongue thickness
 clip_width   = 5;     // tongue width across the corner
 clip_gap     = 0.7;   // clearance from tongue face to seated cuvette corner
 clip_preload = 0.4;   // nub interference with the seated cuvette corner
-clip_root_z  = 24;    // pocket ceiling (chamber_depth-4); tongue anchors
-                      // into the solid block above
-clip_tip_z   = 6.5;   // height of the tongue's free end
+clip_root_z  = 36;    // pocket ceiling; tongue anchors into the corner
+                      // tower above (see body())
+clip_tip_z   = 16;    // height of the tongue's free end
 nub_r        = 1.2;
 nub_len      = 3;
-nub_z        = 10;    // as high as the shortened spring arm allows; below
-                      // the beam, but the plumb cuvette registers fine
+nub_z        = window_z;  // nub presses at optical-path height; the corner
+                          // anchor tower gives the spring arm this needs
 
 /* ---- internal clip pocket (diagonal distances from cavity center) ---- */
 pocket_front = 8.6;   // front plane; breaks the cavity corner into a slit
@@ -100,7 +114,7 @@ standoff     = 4;
 plate_thick  = 3;
 shroud_wall  = 2;
 pcb_clr      = 0.3;
-shroud_lip   = 1;
+shroud_lip   = 0;
 shroud_in    = pcb_size + 2*pcb_clr;
 shroud_out   = shroud_in + 2*shroud_wall;
 shroud_h     = standoff + pcb_thick + shroud_lip;
@@ -132,40 +146,50 @@ module at_corner(d=0, z=0) {
             children();
 }
 
-/* ---------- chamber body (chamber_depth tall) ---------- */
+/* ---------- chamber body (chamber_depth tall + clip anchor tower) ---------- */
 module body() {
-    translate([0,0,chamber_depth/2]) {
-        difference() {
-            cube([outer_side, outer_side, chamber_depth], center=true);
+    difference() {
+        union() {
+            // chamber walls
+            translate([-outer_side/2, -outer_side/2, 0])
+                cube([outer_side, outer_side, chamber_depth]);
 
-            // inner cavity
-            translate([0,0,floor_thick])
-                cube([holder_side, holder_side, chamber_depth], center=true);
-
-            // optical window
-            translate([0,0,window_z - chamber_depth/2])
-                rotate([0,90,0])
-                    cylinder(h=outer_side+2, r=window_diam/2, center=true);
-
-            // chamfer all four vertical corner edges (see corner_flat_d)
-            for (a=[0:90:270])
-                rotate([0,0,a])
-                    translate([corner_flat_d/sqrt(2), corner_flat_d/sqrt(2), 0])
-                        rotate([0,0,45])
-                            translate([0, -outer_side, -(chamber_depth+2)/2])
-                                cube([outer_side, outer_side*2, chamber_depth+2]);
+            // clip anchor tower: a corner column rising to the plate-top
+            // plane, so the tongue's hinge sits high enough for a soft
+            // spring with the nub at optical-path height.  Printed upside
+            // down it starts on the bed -- no support needed.
+            translate([-outer_side/2, 3, chamber_depth - 5])
+                cube([outer_side/2 - 3, outer_side/2 - 3,
+                      holder_depth - chamber_depth + 5]);
         }
 
-        // two registration rods along y on the +x side
-        translate([cuvette_dim/2+rod_radius, holder_side/3, 0])
-            cylinder(h=chamber_depth, r=rod_radius, center=true);
-        translate([cuvette_dim/2+rod_radius, -holder_side/3, 0])
-            cylinder(h=chamber_depth, r=rod_radius, center=true);
+        // inner cavity (tall, so it shapes the tower's cavity faces too)
+        translate([-holder_side/2, -holder_side/2, floor_thick])
+            cube([holder_side, holder_side, holder_depth]);
 
-        // one registration rod on the -y side
-        translate([0, -cuvette_dim/2-rod_radius, 0])
-            cylinder(h=chamber_depth, r=rod_radius, center=true);
+        // optical window
+        translate([0, 0, window_z])
+            rotate([0,90,0])
+                cylinder(h=outer_side+2, r=window_diam/2, center=true);
+
+        // chamfer all four vertical corner edges (see corner_flat_d)
+        for (a=[0:90:270])
+            rotate([0,0,a])
+                translate([corner_flat_d/sqrt(2), corner_flat_d/sqrt(2), 0])
+                    rotate([0,0,45])
+                        translate([0, -outer_side, -1])
+                            cube([outer_side, outer_side*2, holder_depth+2]);
     }
+
+    // two registration rods along y on the +x side
+    translate([cuvette_dim/2+rod_radius, holder_side/3, 0])
+        cylinder(h=chamber_depth, r=rod_radius);
+    translate([cuvette_dim/2+rod_radius, -holder_side/3, 0])
+        cylinder(h=chamber_depth, r=rod_radius);
+
+    // one registration rod on the -y side
+    translate([0, -cuvette_dim/2-rod_radius, 0])
+        cylinder(h=chamber_depth, r=rod_radius);
 }
 
 /* ---------- internal clip pocket ---------- */
@@ -183,7 +207,7 @@ module tongue() {
     // flat 45-degree tongue, fusing into the solid material above the pocket
     at_corner(d_face)
         translate([-clip_thick, -clip_width/2, clip_tip_z])
-            cube([clip_thick, clip_width, chamber_depth - clip_tip_z]);
+            cube([clip_thick, clip_width, holder_depth - clip_tip_z]);
 
     // rounded vertical nub ridge; tip sits clip_preload past the seated
     // cuvette corner, round profile ramps for insertion and removal
@@ -241,7 +265,8 @@ module pcb_mount(header_cut=false) {
 
 // ghost PCB seated in its pocket, for fit checking
 module pcb_ghost() {
-    translate([standoff + plate_thick, -pcb_size/2, window_z - pcb_size/2])
+    // % keeps ghosts out of render/STL export; color still tints the preview
+    %translate([standoff + plate_thick, -pcb_size/2, window_z - pcb_size/2])
          color("Green", 0.4) {
              cube([pcb_thick, pcb_size, pcb_size]);
          }
@@ -250,7 +275,7 @@ module pcb_ghost() {
 // ghost cuvette in its seated position
 module cuvette() {
     
-    translate([-cuvette_dim/2, -cuvette_dim/2, floor_thick])
+    %translate([-cuvette_dim/2, -cuvette_dim/2, floor_thick])
         color("Blue", 0.4) {
         cube([cuvette_dim, cuvette_dim, holder_depth]);
         }
@@ -273,29 +298,54 @@ module base_plate() {
 }
 
 /* ---------- assembly ---------- */
-// chamber + clip + both shrouded PCB mounts (holder4 in the file series)
-module holder_assembly() {
-    difference() {
-        body();
-        clip_pocket();
-    }
-    tongue();
-
-    // mirror([1,0,0]) flips x only, so header_side puts both slots on the
-    // same global y side
-    translate([outer_side/2, 0, 0])          // detector side
-        pcb_mount(header_cut=header_cutaway_det);
-    translate([-outer_side/2, 0, 0])         // emitter side
-        mirror([1,0,0]) pcb_mount(header_cut=header_cutaway_emit);
-}
-
-module holder8() {
+// everything EXCEPT the tongue, so the xray view can ghost it as one piece
+module holder_shell() {
     base_plate();
-    translate([0,0,base_thick])
-        holder_assembly();
+    translate([0,0,base_thick]) {
+        difference() {
+            body();
+            clip_pocket();
+        }
+        // mirror([1,0,0]) flips x only, so header_side puts both slots on
+        // the same global y side
+        translate([outer_side/2, 0, 0])      // detector side
+            pcb_mount(header_cut=header_cutaway_det);
+        translate([-outer_side/2, 0, 0])     // emitter side
+            mirror([1,0,0]) pcb_mount(header_cut=header_cutaway_emit);
+    }
 }
 
-holder8();
-translate([0,0,base_thick]) cuvette();
-translate([outer_side/2, 0, base_thick]) pcb_ghost();
-translate([-outer_side/2, 0, base_thick]) mirror([1,0,0]) pcb_ghost();
+module holder9() {
+    holder_shell();
+    translate([0,0,base_thick]) tongue();
+}
+
+/* ---------- view modes ---------- */
+// block of chamber wall carved away around the clip corner by the cutaway
+// view, leaving the whole tongue standing exposed in the opening (the box
+// stops flush at the emitter plate face and clear of the optical window)
+module corner_reveal() {
+    translate([-outer_side/2, 3, base_thick + 1])
+        cube([outer_side/2 - 3, outer_side/2 + 1,
+              holder_depth + base_thick]);
+}
+
+if (view_mode == "xray") {
+    translate([0,0,base_thick]) color("Crimson") tongue();
+    %holder_shell();
+} else if (view_mode == "cutaway") {
+    difference() {
+        holder_shell();
+        corner_reveal();
+    }
+    translate([0,0,base_thick]) color("Crimson") tongue();
+} else {
+    holder9();
+}
+
+// fit-check ghosts
+if (show_ghosts) {
+    translate([0,0,base_thick]) cuvette();
+    translate([outer_side/2, 0, base_thick]) pcb_ghost();
+    translate([-outer_side/2, 0, base_thick]) mirror([1,0,0]) pcb_ghost();
+}

@@ -68,13 +68,16 @@ check the file, not this doc, for current numbers).
 
 ## Printing (important)
 
-Print **upside down** (plate/shroud tops on the bed). The tongue then builds
-base-first from its anchor and the sealed internal pocket needs NO support —
-support inside the pocket could never be removed, so right-side-up printing
-is effectively broken by design. Flipped, let the slicer support the chamber
-rim (it sits below the plate tops) and the base-plate ears; both are external
-and reachable. Chamber floor (~13 mm) and shroud far segments (~35 mm) print
-as bridges.
+**holder10 and later: print RIGHT SIDE UP** (base plate on the bed). The
+tongue is hinged at the bottom (root fused into the chamber floor), so it
+builds base-first and the sealed pocket needs no support; nothing else
+overhangs. Only the shroud top segments (~35 mm) bridge.
+
+**holder4 through holder9: print upside down** (plate/shroud tops on the
+bed) — their tongue hangs from a top anchor, and support inside the sealed
+pocket could never be removed, so right-side-up printing is broken by design
+for those files. Flipped, support the chamber rim and base ears (external,
+reachable).
 
 ## Verification recipes that worked well
 
@@ -126,7 +129,8 @@ as bridges.
 | holder6.scad | consolidation: fully standalone file (holder6_a: user variant) |
 | holder7.scad | optional shroud header cutaways |
 | holder8.scad | 15 mm beam height (floor 5), chamber shortened for cuvette grabbing |
-| holder9.scad | **current** — view modes (xray/cutaway), clip anchor tower, nub back at beam height |
+| holder9.scad | view modes (xray/cutaway), clip anchor tower, nub back at beam height |
+| holder10.scad | **current** — bottom-hinged spring (prints right side up, tower removed), fatter nub (r=2, back-flattened), preload 0.6, thicker rods (r=0.75); response to holder9 print test (grip too loose) |
 
 ## Conventions
 

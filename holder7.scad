@@ -77,19 +77,19 @@ hole_spacing = 26;
 pcb_thick    = 1.6;
 m3_pilot     = 2.5;
 boss_d       = 7;
-standoff     = 5;
+standoff     = 3;
 plate_thick  = 3;
 shroud_wall  = 2;
 pcb_clr      = 0.3;
-shroud_lip   = 1;
+shroud_lip   = 0;
 shroud_in    = pcb_size + 2*pcb_clr;
 shroud_out   = shroud_in + 2*shroud_wall;
 shroud_h     = standoff + pcb_thick + shroud_lip;
 plate_width  = shroud_out;
 
 /* ---- optional header cutaways ---- */
-header_cutaway_det  = true;   // slot in the detector-side shroud
-header_cutaway_emit = true;   // slot in the emitter-side shroud
+header_cutaway_det  = false;   // slot in the detector-side shroud
+header_cutaway_emit = false;   // slot in the emitter-side shroud
 header_side  = 1;     // +1: slot on the +y side, -1: on the -y side
 header_len   = 22;    // slot length along z (7x2.54 header body + margin)
 header_clear = 3;     // slot floor this far below the board's inner face,
@@ -271,6 +271,6 @@ module holder7() {
 }
 
 holder7();
-//translate([0,0,base_thick]) cuvette();
-//translate([outer_side/2, 0, base_thick]) pcb_ghost();
-//translate([-outer_side/2, 0, base_thick]) mirror([1,0,0]) pcb_ghost();
+translate([0,0,base_thick]) cuvette();
+translate([outer_side/2, 0, base_thick]) pcb_ghost();
+translate([-outer_side/2, 0, base_thick]) mirror([1,0,0]) pcb_ghost();

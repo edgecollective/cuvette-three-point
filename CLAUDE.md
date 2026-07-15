@@ -137,7 +137,9 @@ reachable).
 | holder12.scad | ±y walls shaved to 3 mm above the pocket roof for nut access (superseded by holder13's approach) |
 | holder13.scad | based on holder11 (no shave): captive hex-nut insets (5.8 AF × 2.6 deep) in each plate's inner face at all 8 holes; nuts press in once, screws drive from the board side |
 | holder14.scad | nub block raised (nub_z_lo 12→15) and its underside wedge steepened to 1.5:1 (~56°) for a cleaner right-side-up print |
-| holder15.scad | **current** — pressing face widened 3→7 mm (print-rounded edges were inside the slit and caused residual bistability); pocket gains a shallow wide front zone to house it without thinning the corner's opaque skin |
+| holder15.scad | pressing face widened 3→7 mm (print-rounded edges were inside the slit and caused residual bistability); pocket gains a shallow wide front zone to house it without thinning the corner's opaque skin |
+| v2/holder16.scad | holder15 with wall_width 5 (NB: leaves only ~0.47 mm skin over the pocket's deep corners — the pocket was sized for 6 mm walls) |
+| v2/holder15_short_one_side.scad | holder15 with the +x (two-rod) wall thinned to `short_wall` (2 mm), bringing that board 4 mm closer to the cuvette; chamber internals verified geometrically IDENTICAL to holder15 (boolean XOR over the chamber region is empty); mount either PCB on the short side — the clip corner marks the long (−x) side |
 
 ## Conventions
 

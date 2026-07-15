@@ -2,10 +2,12 @@
 
 A 3D-printed cuvette holder for a DIY colorimeter, designed in OpenSCAD.
 
-**Current design: `holder15.scad` — print-tested and working.** A standard
-12.5 mm square cuvette drops in and seats in the same position every
-insertion, with no bi-stability. Earlier `holderN` files are the design
-history (see [Design evolution](#design-evolution)).
+**Current design: [`v1/holder15.scad`](v1/holder15.scad) — print-tested and
+working** (with a ready-to-slice [`v1/holder15.stl`](v1/holder15.stl)). A
+standard 12.5 mm square cuvette drops in and seats in the same position
+every insertion, with no bi-stability. The earlier `holderN` files in
+[`drafts/`](drafts/) are the design history (see
+[Design evolution](#design-evolution)).
 
 ## How it works: three-point registration
 
@@ -62,7 +64,7 @@ Suggested: opaque (ideally black) filament for stray-light rejection.
 ## Using the OpenSCAD file
 
 Everything is parametric; the interesting knobs are at the top of
-`holder15.scad` (`clip_preload` for grip force, `nut_af` for nut fit,
+`v1/holder15.scad` (`clip_preload` for grip force, `nut_af` for nut fit,
 `mount_hole_d` for base screws, etc.). Two view helpers:
 
 - `view_mode = "xray"` — spring drawn solid inside a transparent shell
@@ -73,8 +75,8 @@ Everything is parametric; the interesting knobs are at the top of
 
 ## Design evolution
 
-Each `holderN.scad` is self-contained and renderable; changes were driven by
-print-and-test cycles:
+Each `holderN.scad` in `drafts/` is self-contained and renderable; changes
+were driven by print-and-test cycles:
 
 | file | change |
 |---|---|

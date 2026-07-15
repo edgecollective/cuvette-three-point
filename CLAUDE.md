@@ -7,10 +7,12 @@ position every insertion ("three-point" kinematic registration). Emitter and
 detector PCBs mount on opposite faces, aligned with an optical window through
 the chamber at cuvette mid-height.
 
-`holder9.scad` is the current design. The numbered files are the design
-history, each stage self-contained and renderable (see Lineage below); when
-making changes, work on the latest file (or a new `holderN+1.scad` if the
-user asks for a new stage — that has been the pattern).
+The current, print-tested design is `v1/holder15.scad` (blessed STL beside
+it). The numbered `holderN` files in `drafts/` are the design history, each
+stage self-contained and renderable (see Lineage below); when making
+changes, work on the latest version (or a new draft stage if the user asks
+for one — that has been the pattern), and refresh `v1/` only when a print
+test blesses a new revision.
 
 ## Core design (holder9)
 

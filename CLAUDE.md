@@ -141,6 +141,69 @@ reachable).
 | v2/holder16.scad | holder15 with wall_width 5 (NB: leaves only ~0.47 mm skin over the pocket's deep corners — the pocket was sized for 6 mm walls) |
 | v2/holder15_short_one_side.scad | holder15 with the +x (two-rod) wall thinned to `short_wall` (2 mm), bringing that board 4 mm closer to the cuvette; chamber internals verified geometrically IDENTICAL to holder15 (boolean XOR over the chamber region is empty); mount either PCB on the short side — the clip corner marks the long (−x) side |
 
+## Wooden case (`wooden_case/`)
+
+Finger-jointed plywood enclosure for the v1 holder plus the UV-Control
+board (115×46, mount holes on a 108×39 grid, micro-USB on the board's long
+"top" edge, SSD1306 display, buttons wired to its A/B/C pads). Two
+versions: `v1/case1.scad` hangs the board under the lid (display soldered
+on headers showing through a lid window); `v2/case2.scad` — display,
+buttons, and holder PCBs are all on CABLES, so the
+board mounts flat on the case floor on `board_lift` standoffs (hole grid
+in the bottom panel, USB slot near the floor), the lid window gets M2
+mount holes for the cabled SSD1306 module and can go anywhere, and the
+buttons are free too (but their ~20 mm bodies hang over the board's front
+edge — see the note at `button_z`); `v3/case3.scad` is the current
+direction — v2 minus all lid fasteners: the walls repeat their bottom-edge
+"square wave" tabs on their TOP edges and the lid gets the same slots as
+the bottom panel (shared `edge_slots(fit)` module; `slot_fit` adds lid-slot
+clearance, 0 = kerf-snug), so the lid PRESS-FITS on dry, helped by the
+snug holder opening (`v3_shorter/case3_shorter.scad`: same, but the lid
+lands flush with the CHAMBER TOP RIM instead — `hold_top = 38` = base 3 +
+chamber_depth 35, so `Hi = hold_top − t`, the plates/shrouds poke 5 mm up
+through the lid bands, 5 mm more cuvette is grabbable, and `button_z`
+drops 21→19 for margin in the shorter wall); `v4/case4.scad` +
+`v4/post4.scad` is the current
+direction — v3's square-wave lid plus four M3 screws into 3D-PRINTED
+NUT-CARRIER POSTS (print 4): each post hangs on a front/back wall via a
+tab through an 8×8 lasered slot at z (Hi−14)..(Hi−6), top face flush at
+the wall top, M3 nut slid in captive from the inside (holder15-style),
+M3×14 down through the lid; glueless, posts slim (post_d 8) to clear the
+board footprint, print the post lying on a side face. Shared facts:
+
+- Origin: plan center, z=0 at the interior floor. Interior height is
+  `Hi = hold_h - t` so the lid's OUTER face is exactly flush with the
+  holder top (43) — the defining constraint of the case. Holder stands on
+  the floor at `holder_cx` (left end), screwed through its base ears
+  (holes at holder_cx±12, y=±23.8), and rises through a lid opening. In
+  v1 the opening is loose all around; in v2 it is a CROSS: longitudinally
+  snug (open_l = hold_base_x + 2*open_fit, so the ±x edges clamp the
+  holder's shroud/board faces; kerf-tune open_fit) with four small relief
+  notches at y=±13 for the PCB screw heads (they stick ~3 mm past those
+  faces into the lid thickness); full open_w width only over the
+  plate/shroud bands, while the middle narrows to an octagon hugging the
+  chamber walls + corner chamfers (chamber_hw/chamber_corner_d), covering
+  the former open corridors above the chamber on the ±y sides. v2's lid has no display
+  mounting holes — just the window (module fixed with tape/glue/bezel).
+- Board's KiCad top edge (USB) faces +y (back panel) in both versions.
+- Lid is removable. v1: screws into four glued-in corner strips (offcuts
+  of the same ply) at `lid_scr`. v2: T-SLOT CAPTIVE NUTS — each front/back
+  wall top edge has a T-slot (channel `tslot_chan_w`, nut cross-slot
+  `tslot_nut_w`×`tslot_nut_t`, depths derived from `lid_screw_len` − t)
+  holding an M3 nut; M3×16 machine screws drive down through the lid.
+  Sheet-thickness independent (works at 1/8"; edge-screwing ply directly
+  was rejected — M3 OD ≈ 3.0 vs 3.2 mm edge would split/strip). v3: no
+  fasteners — press-fit onto the walls' top-edge tabs. v4: v3's tabs for
+  location + M3 screws into printed hanging nut-carrier posts for
+  retention.
+- `mode="flat"` lays out all six panels in 2D for DXF/SVG export;
+  `mode="3d"` is the assembly with `%` ghosts.
+- Verified (same boolean recipes): all panel-pair intersections are exact
+  mating faces (zero volume), holder and board clear all wood and blocks.
+- **UNVERIFIED against hardware**: display window, USB slot, and button
+  positions/diameter are estimates marked ADJUST in the file — measure the
+  real board/buttons before cutting.
+
 ## Conventions
 
 - STLs are generated artifacts; commit them only deliberately (e.g., a known

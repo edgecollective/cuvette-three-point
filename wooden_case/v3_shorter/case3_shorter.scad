@@ -37,7 +37,7 @@
 
 use <../../v1/holder15.scad>
 
-mode = "3d";   // "3d" | "flat"
+mode = "fkat";   // "3d" | "flat"
 
 /* ---- material ---- */
 t       = 6;    // plywood thickness
@@ -106,8 +106,13 @@ disp_sz     = [26, 15];    // glass opening
 /* ---- back panel: USB slot ---- ADJUST (plug overmolds vary) */
 usb_cx = 75;                       // slot center x (board-local ~103)
 usb_w  = 16;
-usb_h  = 10;
-usb_cz = board_lift + 1.6 + 1.5;   // centered on the connector
+usb_z0 = 10;                       // slot bottom, above the interior floor
+usb_z1 = 15;                       // slot top
+usb_h  = usb_z1 - usb_z0;
+usb_cz = (usb_z0 + usb_z1)/2;
+// NB: with board_lift = 6 the connector sits at z 7.6..10.6 -- mostly
+// BELOW this slot.  Use ~9-10 mm standoffs (board_lift) to center the
+// connector in the 10..15 window.
 
 /* ---- front panel: cabled buttons ---- ADJUST count/positions/diameter.
    NB: with the board on the floor, a panel-mount button's body (~20 mm

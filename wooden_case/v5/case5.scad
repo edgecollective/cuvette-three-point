@@ -100,7 +100,9 @@ brd_cx    = brd_x0 + brd_l/2; //   edge (USB side) faces the BACK panel
 // relief notches for them.  Crosswise (y) keeps its loose 1.7 mm/side.
 open_fit      = 0.1;
 open_l        = hold_base_x + 2*open_fit;
-open_w        = 42;
+open_w        = 39;    // band length along the lid's long axis: was 42
+                       // (1.7 mm slack/side around the 38.6 mm plates);
+                       // shortened 1.5 mm per side -> 0.2 mm fit/side
 // (no screw-head relief notches: with the lid raised to z 38..43, the
 // PCB screws at z=36 sit below the lid underside -- but see the NB at
 // the top screws: a standard head's top edge reaches z~38.8, so use

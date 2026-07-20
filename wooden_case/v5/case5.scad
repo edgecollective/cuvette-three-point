@@ -224,9 +224,12 @@ module bottom_2d() {               // tab slots + holder AND board hole grids
     difference() {
         square([L, W], center=true);
         edge_slots();
-        for (sx=[-1,1], sy=[-1,1])
-            translate([holder_cx + sx*hold_mnt_x, sy*hold_mnt_y])
-                circle(d=hold_mnt_d, $fn=32);
+        // holder base-ear holes, holder ROTATED 90 deg (optical axis
+        // across the case; emitter/detector boards face front/back)
+        translate([holder_cx, 0]) rotate(90)
+            for (sx=[-1,1], sy=[-1,1])
+                translate([sx*hold_mnt_x, sy*hold_mnt_y])
+                    circle(d=hold_mnt_d, $fn=32);
         for (sx=[-1,1], sy=[-1,1])
             translate([brd_cx + sx*brd_dx/2, sy*brd_dy/2])
                 circle(d=brd_hole_d, $fn=32);
@@ -237,7 +240,9 @@ module lid_2d() {                  // opening, display window, press-fit slots
     difference() {
         square([L, W], center=true);
         edge_slots(slot_fit);
-        translate([holder_cx, 0]) {
+        // cross opening, rotated 90 deg with the holder: the snug open_l
+        // direction now runs across the case (case y)
+        translate([holder_cx, 0]) rotate(90) {
             // narrow octagonal middle: hugs the chamber walls + chamfers
             intersection() {
                 square(2*(chamber_hw+open_fit), center=true);
@@ -272,7 +277,8 @@ module assembly() {
 
 module ghosts() {
     // the v1 holder, screwed to the floor (printed in black filament)
-    %color([0.15, 0.15, 0.15]) translate([holder_cx, 0, 0]) holder15();
+    %color([0.15, 0.15, 0.15]) translate([holder_cx, 0, 0])
+        rotate([0, 0, 90]) holder15();
 
     // control board on its standoffs (component side up)
     %color("Green")

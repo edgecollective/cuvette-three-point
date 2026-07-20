@@ -50,7 +50,7 @@
 
 use <../../v1/holder15.scad>
 
-mode = "3d";   // "3d" | "flat"
+mode = "flat";   // "3d" | "flat"
 
 /* ---- material ---- */
 t       = 5;    // plywood thickness
@@ -325,7 +325,9 @@ if (mode == "flat") {
     bottom_2d();
     translate([0, W+gap]) lid_2d();
     translate([0, -(W/2+gap+Hi+t)]) front_2d();
-    translate([0, -(W/2+2*gap+2*(Hi+t)+t)]) back_2d();
+    // back panel FLIPPED about its vertical axis in the flat layout, so
+    // the face drawn up here is the one that faces OUT on the case
+    translate([0, -(W/2+2*gap+2*(Hi+t)+t)]) mirror([1, 0]) back_2d();
     translate([L/2+gap+t+Wi/2, 0]) wall_side_2d();
     translate([L/2+gap+t+Wi/2, Hi+2*t+gap]) wall_side_2d();
 } else {

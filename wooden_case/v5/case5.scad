@@ -79,8 +79,10 @@ board_lift = 6;       // standoff height: floor -> board underside
 /* ---- interior ---- */
 Li = 180;             // interior length  (x)
 Wi = 62;              // interior width   (y)
-Hi = hold_top - t;    // interior height: lid OUTER face flush with the
-                      // chamber top rim (plates/shrouds stick up past it)
+Hi = 38;              // interior height: floor top -> lid UNDERSIDE = 38,
+                      // so the lid underside meets the chamber top rim
+                      // (hold_top) and with t=5 the lid's outer face lands
+                      // flush with the PCB plate/shroud tops (43)
 L  = Li + 2*t;
 W  = Wi + 2*t;
 
@@ -99,8 +101,11 @@ brd_cx    = brd_x0 + brd_l/2; //   edge (USB side) faces the BACK panel
 open_fit      = 0.1;
 open_l        = hold_base_x + 2*open_fit;
 open_w        = 42;
-head_relief_w = 9;     // notch width along y, centered on y=+/-13
-head_relief_d = 3.5;   // notch depth beyond the opening edge (head is ~3)
+// (no screw-head relief notches: with the lid raised to z 38..43, the
+// PCB screws at z=36 sit below the lid underside -- but see the NB at
+// the top screws: a standard head's top edge reaches z~38.8, so use
+// LOW-PROFILE or countersunk screws on the UPPER holder holes, or the
+// lid will sit ~0.8 mm proud on the heads)
 
 // the opening is a CROSS, not a rectangle: full open_w width only over the
 // plate/shroud bands at the +/-x ends; the middle narrows to an octagon
@@ -243,10 +248,6 @@ module lid_2d() {                  // opening, display window, press-fit slots
                 translate([sx*(open_l/2 + chamber_hw - 0.5)/2, 0])
                     square([open_l/2 - chamber_hw + 0.5, open_w], center=true);
         }
-        // relief notches for the holder's PCB screw heads (y=+/-13)
-        for (sx=[-1,1], sy=[-1,1])
-            translate([holder_cx + sx*(open_l+head_relief_d)/2, sy*13])
-                square([head_relief_d+eps, head_relief_w], center=true);
         translate(disp_c) square(disp_sz, center=true);
         // self-tapper clearance holes over the wall centerlines
         for (x=fb_scr_x, sy=[-1,1])

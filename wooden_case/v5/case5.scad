@@ -124,10 +124,11 @@ disp_c      = [51, 0];     // window center -- free, place anywhere on the lid
 disp_sz     = [25, 14];    // glass opening (measured)
 
 /* ---- back panel: USB slot ---- ADJUST (plug overmolds vary) */
-usb_cx = 75;                       // slot center x (board-local ~103)
+usb_cx = 53;                       // slot center x (was 75; shifted 22
+                                   //   toward the middle of the case)
 usb_w  = 16;
-usb_z0 = 10;                       // slot bottom, above the interior floor
-usb_z1 = 15;                       // slot top
+usb_z0 = 12.5;                     // slot bottom, above the interior floor
+usb_z1 = 17.5;                     //   (raised 2.5 = half the 5 mm span)
 usb_h  = usb_z1 - usb_z0;
 usb_cz = (usb_z0 + usb_z1)/2;
 // NB: with board_lift = 6 the connector sits at z 7.6..10.6 -- mostly
@@ -143,7 +144,7 @@ button_x = [35, 67];    // hole centers along the front, toward the right end
 button_z = 19;          // center height, lowered vs v3's 21: the shorter
                         // wall (Hi=32) needs margin above the 16 mm hole;
                         // body-over-board clearance drops to ~3.6 mm
-button_d = 16;          // 16 mm panel-mount pushbutton
+button_d = 12;          // 12 mm panel-mount pushbutton (measured)
 
 /* ---- self-tapping lid screws into the wall top edges ---- */
 lid_scr_d  = 3.2;         // lid clearance holes for M3 self-tappers
@@ -296,10 +297,10 @@ module ghosts() {
     // bezel + actuator proud of the panel, body reaching ~20 mm inside
     %color("Silver") for (bx=button_x)
         translate([bx, -W/2, button_z]) {
-            rotate([-90,0,0]) cylinder(h=t+20, d=15.5, $fn=40);   // body
-            rotate([ 90,0,0]) cylinder(h=2, d=18.5, $fn=40);      // bezel
+            rotate([-90,0,0]) cylinder(h=t+20, d=button_d-0.5, $fn=40); // body
+            rotate([ 90,0,0]) cylinder(h=2, d=button_d+2, $fn=40);      // bezel
             rotate([ 90,0,0]) translate([0,0,2])
-                cylinder(h=2.5, d=10, $fn=40);                    // actuator
+                cylinder(h=2.5, d=button_d-5, $fn=40);                  // actuator
         }
 
     // the six self-tapping lid screws (heads on the lid, threads in the

@@ -1,4 +1,17 @@
-// case3_shorter.scad -- v3 with a SHORTER case: the lid's outer face is
+// case5.scad -- v3_shorter plus M3 SELF-TAPPING LID SCREWS: the lid keeps
+// the press-fit "square wave" seating for location, and is additionally
+// retained by M3 self-tappers driving down through lid clearance holes
+// into the top EDGES of the walls below -- two into the front wall, two
+// into the back, one into each side wall (see *_scr_* below), all placed
+// on solid edge segments clear of the tabs and corner fingers.
+//
+// !! Edge-screwing 5 mm ply leaves only ~1 mm of material each side of an
+// M3 thread, so: ALWAYS drill a 2.0-2.5 mm pilot first (assemble the box,
+// use the lid holes as drill guides), drive gently, and don't overtighten
+// -- the threads strip before the head seats if you crank on them.
+// Screw length: through the lid (t) + ~10 mm of engagement => M3 x 16.
+//
+// Based on case3_shorter.scad -- v3 with a SHORTER case: the lid's outer face is
 // flush with the holder's CHAMBER TOP RIM (base 3 + chamber_depth 35 =
 // 38 mm above the floor) instead of the taller PCB plate/shroud tops (43).
 // The plates/shrouds poke 5 mm up through the lid's cross-opening bands,
@@ -37,7 +50,7 @@
 
 use <../../v1/holder15.scad>
 
-mode = "flat";   // "3d" | "flat"
+mode = "3d";   // "3d" | "flat"
 
 /* ---- material ---- */
 t       = 5;    // plywood thickness
@@ -101,7 +114,7 @@ chamber_corner_d = 14.2;   // chamber corner chamfer distance (corner_flat_d)
    hot glue, or a printed bezel */
 disp_c      = [51, 0];     // window center -- free, place anywhere on the lid
                            //   (centered above the two front-panel buttons)
-disp_sz     = [26, 15];    // glass opening
+disp_sz     = [25, 14];    // glass opening (measured)
 
 /* ---- back panel: USB slot ---- ADJUST (plug overmolds vary) */
 usb_cx = 75;                       // slot center x (board-local ~103)
@@ -124,6 +137,16 @@ button_z = 19;          // center height, lowered vs v3's 21: the shorter
                         // wall (Hi=32) needs margin above the 16 mm hole;
                         // body-over-board clearance drops to ~3.6 mm
 button_d = 16;          // 16 mm panel-mount pushbutton
+
+/* ---- self-tapping lid screws into the wall top edges ---- */
+lid_scr_d  = 3.2;         // lid clearance holes for M3 self-tappers
+fb_scr_x   = [-80, 0, 80]; // into the front AND back walls (6 screws):
+                          //   near each end (solid segment between the
+                          //   outer tab and the corner fingers) plus one
+                          //   mid-length (solid segment between the two
+                          //   middle tabs)
+side_scr_y = [];          // none into the side (end) walls
+scr_embed  = 11;          // thread engagement below the lid (M3 x 16)
 
 /* ---- top/bottom-edge tabs (same "square wave" both edges) ---- */
 fb_tab_x   = [-60, -20, 20, 60];   // front/back wall tab centers (case x)
@@ -225,6 +248,11 @@ module lid_2d() {                  // opening, display window, press-fit slots
             translate([holder_cx + sx*(open_l+head_relief_d)/2, sy*13])
                 square([head_relief_d+eps, head_relief_w], center=true);
         translate(disp_c) square(disp_sz, center=true);
+        // self-tapper clearance holes over the wall centerlines
+        for (x=fb_scr_x, sy=[-1,1])
+            translate([x, sy*(Wi+t)/2]) circle(d=lid_scr_d, $fn=32);
+        for (sx=[-1,1], y=side_scr_y)
+            translate([sx*(Li+t)/2, y]) circle(d=lid_scr_d, $fn=32);
     }
 }
 
@@ -263,6 +291,16 @@ module ghosts() {
             rotate([ 90,0,0]) cylinder(h=2, d=18.5, $fn=40);      // bezel
             rotate([ 90,0,0]) translate([0,0,2])
                 cylinder(h=2.5, d=10, $fn=40);                    // actuator
+        }
+
+    // the six self-tapping lid screws (heads on the lid, threads in the
+    // wall edges below)
+    %color("Silver") for (p=[ for (x=fb_scr_x, sy=[-1,1]) [x, sy*(Wi+t)/2],
+                              for (sx=[-1,1], y=side_scr_y) [sx*(Li+t)/2, y] ])
+        translate([p[0], p[1], 0]) {
+            translate([0, 0, Hi+t]) cylinder(h=2, d=5.5, $fn=20);       // head
+            translate([0, 0, Hi-scr_embed])
+                cylinder(h=scr_embed+t, d=2.9, $fn=20);                 // shank
         }
 
     // cabled display module against the lid underside

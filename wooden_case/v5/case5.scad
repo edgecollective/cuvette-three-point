@@ -50,7 +50,7 @@
 
 use <../../v1/holder15.scad>
 
-mode = "flat";   // "3d" | "flat"
+mode = "3d";   // "3d" | "flat"
 
 /* ---- material ---- */
 t       = 5;    // plywood thickness
@@ -268,6 +268,7 @@ module lid_2d() {                  // opening, display window, press-fit slots
 /* ================= 3D assembly ================= */
 module assembly() {
     color("BurlyWood") translate([0, 0, -t]) linear_extrude(t) bottom_2d();
+    
     color("BurlyWood") translate([0, 0, Hi]) linear_extrude(t) lid_2d();
     color("Peru") translate([0, -Wi/2, 0])
         rotate([90,0,0]) linear_extrude(t) front_2d();
